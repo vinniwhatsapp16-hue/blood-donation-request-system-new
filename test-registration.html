@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Registration</title>
+</head>
+<body>
+    <h1>Test Blood Donation Registration</h1>
+    
+    <script>
+        async function testRegistration() {
+            const registrationData = {
+                name: "John Doe Frontend",
+                email: "johndoe@frontend.test",
+                password: "Password123",
+                phone: "9876543210",
+                role: "donor",
+                bloodGroup: "O+",
+                location: {
+                    coordinates: [77.5946, 12.9716],
+                    address: "123 Main Street, Test Area",
+                    city: "Bangalore",
+                    state: "Karnataka"
+                },
+                medicalHistory: ""
+            };
+
+            try {
+                const response = await fetch('http://localhost:5000/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(registrationData)
+                });
+
+                const result = await response.json();
+                
+                if (response.ok) {
+                    console.log('Registration successful:', result);
+                    document.getElementById('result').innerHTML = `
+                        <h2 style="color: green;">Registration Success!</h2>
+                        <p>User: ${result.user.name}</p>
+                        <p>Email: ${result.user.email}</p>
+                        <p>Role: ${result.user.role}</p>
+                        <p>Blood Group: ${result.user.bloodGroup}</p>
+                        <p>Token: ${result.token.substring(0, 50)}...</p>
+                    `;
+                } else {
+                    console.error('Registration failed:', result);
+                    document.getElementById('result').innerHTML = `
+                        <h2 style="color: red;">Registration Failed!</h2>
+                        <p>Error: ${result.message}</p>
+                        <pre>${JSON.stringify(result, null, 2)}</pre>
+                    `;
+                }
+            } catch (error) {
+                console.error('Network error:', error);
+                document.getElementById('result').innerHTML = `
+                    <h2 style="color: red;">Network Error!</h2>
+                    <p>Error: ${error.message}</p>
+                `;
+            }
+        }
+
+        // Test on page load
+        window.onload = testRegistration;
+    </script>
+    
+    <div id="result">
+        <p>Testing registration...</p>
+    </div>
+</body>
+</html>
